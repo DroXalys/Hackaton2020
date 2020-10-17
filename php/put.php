@@ -1,5 +1,5 @@
 <?php
-$url = "http://127.0.0.1/api/produits/1"; // modifier le produit 1
+$url = "http://127.0.0.1/elements/1"; // modifier l'élément 1
 $data = array('name' => 'MAC', 'description' => 'Ordinateur portable', 'price' => '9658', 'category' => '2');
 
 $ch = curl_init($url);

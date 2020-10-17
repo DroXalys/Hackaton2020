@@ -3,12 +3,12 @@
 	include("db_connect.php");
 	$request_method = $_SERVER["REQUEST_METHOD"];
 
-	function getProducts()
+	function getElements()
 	{
-		global $conn;
-		$query = "SELECT * FROM produit";
+		global $mysqli;
+		$query = "SELECT * FROM element";
 		$response = array();
-		$result = mysqli_query($conn, $query);
+		$result = mysqli_query($mysqli, $query);
 		while($row = mysqli_fetch_array($result))
 		{
 			$response[] = $row;
@@ -19,14 +19,14 @@
 	
 	function getElement($id=0)
 	{
-		global $conn;
+		global $mysqli;
 		$query = "SELECT * FROM element";
 		if($id != 0)
 		{
 			$query .= " WHERE id=".$id." LIMIT 1";
 		}
 		$response = array();
-		$result = mysqli_query($conn, $query);
+		$result = mysqli_query($mysqli, $query);
 		while($row = mysqli_fetch_array($result))
 		{
 			$response[] = $row;
@@ -35,28 +35,28 @@
 		echo json_encode($response, JSON_PRETTY_PRINT);
 	}
 	
-	function AddProduct()
+	function AddElement()
 	{
-		global $conn;
-		$name = $_POST["name"];
-		$description = $_POST["description"];
-		$price = $_POST["price"];
-		$category = $_POST["category"];
-		$created = date('Y-m-d H:i:s');
-		$modified = date('Y-m-d H:i:s');
-		echo $query="INSERT INTO produit(name, description, price, category_id, created, modified) VALUES('".$name."', '".$description."', '".$price."', '".$category."', '".$created."', '".$modified."')";
-		if(mysqli_query($conn, $query))
+		global $mysqli;
+		$name = $_POST["nomElement"];
+		$question = $_POST["question"];
+		$reponse1 = $_POST["reponse1"];
+		$reponse2 = $_POST["reponse2"];
+		$element1 = $_POST["element1"];
+		$element2 = $_POST["element2"];
+		echo $query="INSERT INTO element(nomElement, question, elementSuivant1, elementSuivant2, reponse1, reponse2) VALUES('".$name."', '".$element1."', '".$element2."', '".$reponse1."', '".$reponse2."')";
+		if(mysqli_query($mysqli, $query))
 		{
 			$response=array(
 				'status' => 1,
-				'status_message' =>'Produit ajouté avec succès.'
+				'status_message' =>'Element ajoutÃ© avec succÃ¨s.'
 			);
 		}
 		else
 		{
 			$response=array(
 				'status' => 0,
-				'status_message' =>'ERREUR!.'. mysqli_error($conn)
+				'status_message' =>'ERREUR!.'. mysqli_error($mysqli)
 			);
 		}
 		header('Content-Type: application/json');
@@ -65,7 +65,7 @@
 	
 	function updateProduct($id)
 	{
-		global $conn;
+		global $mysqli;
 		$_PUT = array();
 		parse_str(file_get_contents('php://input'), $_PUT);
 		$name = $_PUT["name"];
@@ -76,7 +76,7 @@
 		$modified = date('Y-m-d H:i:s');
 		$query="UPDATE produit SET name='".$name."', description='".$description."', price='".$price."', category_id='".$category."', modified='".$modified."' WHERE id=".$id;
 		
-		if(mysqli_query($conn, $query))
+		if(mysqli_query($mysqli, $query))
 		{
 			$response=array(
 				'status' => 1,
@@ -87,7 +87,7 @@
 		{
 			$response=array(
 				'status' => 0,
-				'status_message' =>'Echec de la mise a jour de produit. '. mysqli_error($conn)
+				'status_message' =>'Echec de la mise a jour de produit. '. mysqli_error($mysqli)
 			);
 			
 		}
@@ -96,11 +96,11 @@
 		echo json_encode($response);
 	}
 	
-	function deleteProduct($id)
+	function deleteElement($id)
 	{
-		global $conn;
+		global $mysqli;
 		$query = "DELETE FROM produit WHERE id=".$id;
-		if(mysqli_query($conn, $query))
+		if(mysqli_query($mysqli, $query))
 		{
 			$response=array(
 				'status' => 1,
@@ -111,7 +111,7 @@
 		{
 			$response=array(
 				'status' => 0,
-				'status_message' =>'La suppression du produit a echoue. '. mysqli_error($conn)
+				'status_message' =>'La suppression du produit a echoue. '. mysqli_error($mysqli)
 			);
 		}
 		header('Content-Type: application/json');
@@ -126,11 +126,11 @@
 			if(!empty($_GET["id"]))
 			{
 				$id=intval($_GET["id"]);
-				getProduct($id);
+				getElement($id);
 			}
 			else
 			{
-				getProducts();
+				getElements();
 			}
 			break;
 		default:
@@ -140,19 +140,19 @@
 			
 		case 'POST':
 			// Ajouter un produit
-			AddProduct();
+			AddElement();
 			break;
 			
 		case 'PUT':
 			// Modifier un produit
 			$id = intval($_GET["id"]);
-			updateProduct($id);
+			updateElement($id);
 			break;
 			
 		case 'DELETE':
 			// Supprimer un produit
 			$id = intval($_GET["id"]);
-			deleteProduct($id);
+			deleteElement($id);
 			break;
 
 	}
