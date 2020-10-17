@@ -23,7 +23,7 @@
 		$query = "SELECT * FROM element";
 		if($id != 0)
 		{
-			$query .= " WHERE id=".$id." LIMIT 1";
+			$query .= " WHERE idElement=".$id." LIMIT 1";
 		}
 		$response = array();
 		$result = mysqli_query($mysqli, $query);
@@ -32,6 +32,7 @@
 			$response[] = $row;
 		}
 		header('Content-Type: application/json');
+		echo $response["nomElement"];
 		echo json_encode($response, JSON_PRETTY_PRINT);
 	}
 	
