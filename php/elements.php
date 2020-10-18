@@ -2,6 +2,7 @@
 	// Connect to database
 	include("db_connect.php");
 	$request_method = $_SERVER["REQUEST_METHOD"];
+	//$mysqli->set_charset("utf8");
 
 	function getElements()
 	{
@@ -25,6 +26,7 @@
 		{
 			$query .= " WHERE idElement=".$id." LIMIT 1";
 		}
+
 		$response = array();
 		$result = mysqli_query($mysqli, $query);
 		while($row = mysqli_fetch_array($result))
@@ -32,7 +34,31 @@
 			$response[] = $row;
 		}
 		header('Content-Type: application/json');
-		echo $response["nomElement"];
+		var_dump($response);
+		echo json_encode($response, JSON_PRETTY_PRINT);
+	}
+
+	function getErrors($id=0,$answer)
+	{
+		global $mysqli;
+		$query = "SELECT Conseils,textErreur FROM erreur";
+		if($id != 0)
+		{
+			$query .= " NATURAL JOIN elementerreur WHERE idElement=".$id." and RepDeclencheur='".$answer."'";
+		}
+
+		//echo $query;
+		//exit;
+
+		$response = array();
+		mysqli_set_charset($mysqli,"utf8");
+		$result = mysqli_query($mysqli, $query);
+		while($row = mysqli_fetch_array($result))
+		{
+			$response = $row;
+		}
+		header('Content-Type: application/json');
+		var_dump($response);
 		echo json_encode($response, JSON_PRETTY_PRINT);
 	}
 	
